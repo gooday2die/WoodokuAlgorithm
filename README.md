@@ -15,5 +15,9 @@ Woodoku is a mobile game that is kinda like Tetris. You can move blocks into spe
 
 ---
 ## Algorithm Design
-- Trying to use heuristic for algorithm.
-- As well as using possibilities.
+### Heuristic Idea & Calculation
+![slide11](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/Slide11.PNG)
+![slide12](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/Slide12.PNG)
+![slide13](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/Slide13.PNG)
+![slide14](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/Slide14.PNG)
+
