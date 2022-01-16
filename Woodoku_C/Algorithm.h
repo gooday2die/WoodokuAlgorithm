@@ -11,6 +11,7 @@
 #include "Shape.h"
 #include <random>
 #include<unistd.h>
+#include <time.h>
 
 typedef struct _bfResult{
     SMALLTYPE score;

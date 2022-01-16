@@ -57,6 +57,7 @@ void BruteForceStupid::run(Field curField){
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> dis(0, 43);
+
     Shape curShapes[3];
     bfResult bestFuture;
     unsigned long score = 0;
@@ -69,12 +70,16 @@ void BruteForceStupid::run(Field curField){
             curShapes[i].printShape();
         }
 
+        clock_t start = clock();
+
         bestFuture = findBestFuture(curField, curShapes);
         printf("Future cnt : %ld\n", bestFuture.futureCnt);
         if (bestFuture.futureCnt == 0){
             printf("\n\nGAMEOVER...\nSCORE : %ld", score);
             break;
         }
+
+        clock_t end = clock();
 
         curField = bestFuture.BestFuture;
         bestFuture.Step1.printField();
@@ -87,14 +92,14 @@ void BruteForceStupid::run(Field curField){
         newScore += curShapes[2].shapeSize();
         score += newScore;
 
-
+        printf("Time Elapsed : %lf sec\n", (double)(end - start) / CLOCKS_PER_SEC);
         printf("BEST SCORE : %d\n", bestFuture.score);
         printf("MOVING : %d %d %d %d %d %d\n", bestFuture.coords_i, bestFuture.coords_j, bestFuture.coords_k, bestFuture.coords_l, bestFuture.coords_m, bestFuture.coords_n);
         printf("\nScore %ld (+%d)\n", score, newScore);
         //scanf("%d", &i);
 
         unsigned int microsecond = 100000;
-        usleep(3 * microsecond);//sleeps for 3 second
+        //usleep(3 * microsecond);//sleeps for 3 second
     }
     return;
 }
