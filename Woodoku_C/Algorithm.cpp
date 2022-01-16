@@ -10,30 +10,35 @@ bfResult BruteForceStupid::findBestFuture(Field curField, Shape* shapeList){
     bfResult result;
     result.score = 0;
     result.futureCnt = 0;
+    SMALLTYPE curMAX = 0;
     for(SMALLTYPE i = 0 ; i < 9 ; i++){
         for (SMALLTYPE j = 0 ; j < 9 ; j++){
             for (SMALLTYPE k = 0 ; k < 9 ; k++){
                 for (SMALLTYPE l = 0 ; l < 9 ; l++){
                     for(SMALLTYPE m = 0 ; m < 9 ; m++){
-                        for(SMALLTYPE n = 0 ; n < 9 ; n++){
-                            if (shapeList[0].canPutIn(i, j, curField)){
-                                Field curField_0 = shapeList[0].putIn(i, j, curField);
-                                if (shapeList[1].canPutIn(k, l, curField_0)){
-                                    Field curField_1 = shapeList[1].putIn(k, l, curField_0);
-                                    if (shapeList[2].canPutIn(m, n, curField_1)){
-                                        Field futureField = shapeList[2].putIn(m, n, curField_1);
+                        for(SMALLTYPE n = 0 ; n < 9 ; n++)
+                            if (shapeList[0].canPutIn(i, j, curField)) {
+                                Field newField0 = shapeList[0].putIn(i, j, curField);
+                                if(shapeList[1].canPutIn(k, l, newField0)) {
+                                    Field newField1 = shapeList[1].putIn(k, l, newField0);
+                                    if (shapeList[2].canPutIn(m, n, newField1)) {
+                                        Field newField2 = shapeList[2].putIn(m, n, newField1);
+                                        //newField2.printField();
+                                        SMALLTYPE score = newField2.peekScore();
+                                        //printf("SCORE : %d", score);
                                         result.futureCnt++;
-                                        if (result.score < futureField.calculateScore()){
-                                            result.BestFuture = futureField;
-                                            result.score = futureField.calculateScore();
+                                        if (curMAX <= score) {
+                                            curMAX = score;
+                                            result.BestFuture = newField2;
+                                            result.Step1 = newField0;
+                                            result.Step2 = newField1;
+                                            result.score = score;
                                             result.coords_i = i;
                                             result.coords_j = j;
                                             result.coords_k = k;
                                             result.coords_l = l;
                                             result.coords_m = m;
                                             result.coords_n = n;
-                                            result.Step1 = curField_0;
-                                            result.Step2 = curField_1;
                                         }
                                     }
                                 }
@@ -43,7 +48,7 @@ bfResult BruteForceStupid::findBestFuture(Field curField, Shape* shapeList){
                 }
             }
         }
-    }
+    printf("MAX Score : %d", curMAX);
     return result;
 }
 
@@ -56,8 +61,8 @@ void BruteForceStupid::run(Field curField){
     bfResult bestFuture;
     unsigned long score = 0;
 
-    
-    /**
+    int i = 0;
+
     while(1){
         for (SMALLTYPE  i = 0 ; i < 3 ; i++){
             curShapes[i] = allShapes[dis(gen)];
@@ -72,21 +77,24 @@ void BruteForceStupid::run(Field curField){
         }
 
         curField = bestFuture.BestFuture;
+        bestFuture.Step1.printField();
+        bestFuture.Step2.printField();
         curField.printField();
         SMALLTYPE newScore = 0;
-        newScore += bestFuture.score;
+        newScore = curField.calculateScore();
         newScore += curShapes[0].shapeSize();
         newScore += curShapes[1].shapeSize();
         newScore += curShapes[2].shapeSize();
         score += newScore;
-        bestFuture.Step1.printField();
-        bestFuture.Step2.printField();
+
 
         printf("BEST SCORE : %d\n", bestFuture.score);
         printf("MOVING : %d %d %d %d %d %d\n", bestFuture.coords_i, bestFuture.coords_j, bestFuture.coords_k, bestFuture.coords_l, bestFuture.coords_m, bestFuture.coords_n);
         printf("\nScore %ld (+%d)\n", score, newScore);
-        scanf("%d", NULL);
+        //scanf("%d", &i);
+
+        unsigned int microsecond = 100000;
+        usleep(3 * microsecond);//sleeps for 3 second
     }
-    */
     return;
 }

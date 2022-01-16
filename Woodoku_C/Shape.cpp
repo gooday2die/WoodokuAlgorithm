@@ -26,8 +26,40 @@ bool Shape::getPixel(SMALLTYPE x, SMALLTYPE y){
     return ((pixels >> ((4 - y) * 5 + (4 - x))) & 1); // shift and get LSB
 }
 
-bool Shape::canPutIn(SMALLTYPE x, SMALLTYPE y, Field field) {
-    if ((x >= 0 && y >= 0) && (x < 9 && y < 9)) {
+void Shape::getShapeSize(){
+    SMALLTYPE w;
+    SMALLTYPE h;
+    SMALLTYPE lastH = 0;
+    SMALLTYPE lastW = 0;
+
+    for(SMALLTYPE i = 0 ; i < 5 ; i++) {
+        for (SMALLTYPE j = 0; j < 5; j++) {
+            if ((j > lastW) && getPixel(j, i) == 1) lastW = j;
+            if ((i > lastH) && getPixel(j, i) == 1) lastH = i;
+        }
+    }
+    h = lastH + 1;
+    w = lastW + 1;
+
+    printf("H :  %d / W : %d\n", h, w);
+}
+
+bool Shape::canPutIn(SMALLTYPE x, SMALLTYPE y, Field field) { // BROKEN
+    SMALLTYPE w = 0;
+    SMALLTYPE h = 0;
+    SMALLTYPE lastH = 0;
+    SMALLTYPE lastW = 0;
+
+    for(SMALLTYPE i = 0 ; i < 5 ; i++){ // calculate width height.
+        for(SMALLTYPE j = 0 ; j < 5 ; j++){
+            if ((j > lastW) && getPixel(j, i) == 1) lastW = j;
+            if ((i > lastH) && getPixel(j, i) == 1) lastH = i;
+        }
+    }
+    w += lastW;
+    h += lastH;
+
+    if ((x + w >= 0 && y + h >= 0) && (x + w < 9 && y + h < 9)) {
         for (SMALLTYPE i = 0; i < 5; i++) {
             for (SMALLTYPE j = 0; j < 5; j++)
                 if (field.getPixelValue(j + x, i + y) + (getPixel(j, i)) > 1) return false;

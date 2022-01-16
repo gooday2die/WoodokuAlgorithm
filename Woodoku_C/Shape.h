@@ -32,5 +32,6 @@ public:
     bool getPixel(SMALLTYPE, SMALLTYPE);
     void printShape();
     SMALLTYPE shapeSize();
+    void getShapeSize();
 };
 

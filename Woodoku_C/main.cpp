@@ -61,14 +61,29 @@ int main(void){
     Shape* allShapes = generateAllShapes();
     Field field = Field();
 
-    //field.printField();
-    //allShapes[0].printShape();
-    //field = allShapes[0].putIn(0,0, field);
+    /**
 
-    //field.printField();
-    //printf("%d", allShapes[0].canPutIn(0,0,field));
+    for(SMALLTYPE i = 0 ; i < 6 ; i++) field.setPixelValue(i, 0, 1);
+    //for(SMALLTYPE i = 0 ; i < 9 ; i++) field.setPixelValue(0, i, 1);
+
+    field.setPixelValue(0, 3, 1);
+    field.setPixelValue(0, 4, 1);
+    field.setPixelValue(0, 5, 1);
+    field.setPixelValue(1, 3, 1);
+    field.setPixelValue(1, 4, 1);
+    field.setPixelValue(1, 5, 1);
+    field.setPixelValue(2, 3, 1);
+    field.setPixelValue(2, 4, 1);
+    field.setPixelValue(2, 5, 1);
+
+
+    field.printField();
+    printf("SCORE : %d\n", field.calculateScore());
+    field.printField();
+
+       */
     BruteForceStupid BFS = BruteForceStupid(allShapes);
-    bfs.run(field);
+    BFS.run(field);
 
 
     /**

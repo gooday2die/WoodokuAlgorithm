@@ -10,6 +10,7 @@
 
 #include "Shape.h"
 #include <random>
+#include<unistd.h>
 
 typedef struct _bfResult{
     SMALLTYPE score;

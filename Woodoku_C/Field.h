@@ -37,6 +37,7 @@ public:
     SMALLTYPE getPixelValue(SMALLTYPE, SMALLTYPE);
     void setPixelValue(SMALLTYPE, SMALLTYPE, SMALLTYPE);
     SMALLTYPE calculateScore(void);
+    SMALLTYPE peekScore(void);
     uint8_t getSector(SMALLTYPE);
     void printField(void);
 };
