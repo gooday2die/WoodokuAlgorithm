@@ -8,11 +8,11 @@
 
 #endif //WOODOKUAI_FIELD_H
 
+#include <stack>
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdint.h>
-
 
 #define SMALLTYPE uint8_t
 
@@ -32,5 +32,7 @@ public:
     void setPixelValue(SMALLTYPE, SMALLTYPE, SMALLTYPE);
     SMALLTYPE calculateScore(void);
     SMALLTYPE peekScore(void);
+    SMALLTYPE countEmptySpaces(void);
+    SMALLTYPE getEmptySpaceGroups(void);
     void printField(void);
 };

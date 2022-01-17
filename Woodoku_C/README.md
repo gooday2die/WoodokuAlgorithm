@@ -2,8 +2,21 @@
 ### Solving Woodoku with C++ 
 By previous Python version, I realized that using Numpy for Woodoku is painfully slow. Thus, I did some bitwise operations and other tricks to make everything faster with C++. Plus with some help from gcc optimization O3.
 ## Implemented Algorithms till now
- ### BruteForceStupid
- Literally brute forces every single possible cases that can be made by positioning 3 pieces (9^6 cases). Python `Woodoku_Algorithm.py` does the same thing, however in painfully slow time. Running the same process with the same block shapes and exact same conditions with the same possible cases, **C++ version runs in 0.171 sec at the same time Python version runs over 10.4 sec**. 
+### The basic Idea
+All algorithms generate all possible cases that can be made by positioning 3 pieces. 9^6 cases are generated and by those generated cases, we figure out which combination of positioning returns the best results. 
+### BruteForceStupid
+Finds out which positioning of 3 pieces result the highest score. If there are multiple ones with the same result, the method picks out the last one. This is implemented as `BruteForceStupid` class.
+### EmptySpace
+Finds out which positioning of 3 pieces result the most empty spaces. If there are multiple ones with the same result, the method picks out the last one. Implemented as `SurvivalMethod` class.
+### HeuristicsMethod
+Finds out which positioning of 3 pieces result the most heuristics score. If there are multiple ones with the same result, the method picks out the last one. Implemented as `heuristicsMethod` class. In this class, it calculates heuristics score in the following equation below. (Till now, 2022-01-17)
+
+    HeuristcsScore = Score + (81 - Empty Space Groups) / 10
+It calculates empty space groups by using DFS and figure out how many empty space groups are there in the field by this combination. I am trying to make heuristics formula that minimizes the number of same heuristics score. If that is minimized, the function will have less chance of picking one randomly without any reason.
+
+### Comparison
+![comp_2022_01_17.png](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/comp_2022_01_17.png)
+
 ## So.. how is this everything really implemented?
 ### Short Answer : Bitwise Operations.
 As I have mentioned up above earlier, using Python and Numpy is painfully slow even with i9 CPU. The Woodoku Field itself, and all shapes are represented in **bit** level. Not even **byte** level. I know its 21st century and there are no reason for this much optimization, but I just wanted to make things faster and faster.
@@ -22,9 +35,6 @@ A Woodoku shape is represented as a Class. In that class, there is a `private` `
 ## So... Is this really fast and does it work?
 ### Its fast and works Okay.
 My personal Woodoku Record is around 2100 points. However, even my Python version brute force Woodoku algorithm can beat up to **6285 points**. C++ version is not perfect yet, however it can score up to **4062 points**. Both measured at 2022-01-17 and has enough room for improvements.
-
-### Python Version Proof
-![YeahItWorks1](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/YeahItWorks1.png)
 
 ### C++ Version Proof
 ![YeahItWorks1](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/YeahItWorks2.png)

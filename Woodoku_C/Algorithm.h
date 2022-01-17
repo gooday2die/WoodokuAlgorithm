@@ -30,8 +30,9 @@ typedef struct _bfResult{
     unsigned long futureCnt;
 }bfResult;
 
+
 /**
- * A class for brute forcing stupid.
+ * A class for brute forcing stupidly.
  */
 class BruteForceStupid{
 private:
@@ -48,4 +49,33 @@ public:
     bfResult findBestFuture(Field, Shape*);
 };
 
+/**
+ * A class for surviving method. Counts the best future with the most empty spaces.
+ * Does not work that well.
+ */
+class SurvivalMethod{
+private:
+    Shape* allShapes;
+public:
+    SurvivalMethod(Shape* shapeArray){
+        allShapes = shapeArray;
+    }
+    void run(Field);
+    bfResult findBestFuture(Field, Shape*);
+};
 
+/**
+ * A class for Heuristics method. figures out the best scoring and the least empty group numbers.
+ * using simple heuristics :
+ * Best scoring + (81 - number of empty groups) / 10
+ */
+class heuristicsMethod{
+private:
+    Shape* allShapes;
+public:
+    heuristicsMethod(Shape* shapeArray){
+        allShapes = shapeArray;
+    }
+    void run(Field);
+    bfResult findBestFuture(Field, Shape*);
+};

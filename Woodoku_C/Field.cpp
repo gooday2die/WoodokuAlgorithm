@@ -197,3 +197,62 @@ void Field::printField(void){
     }
     printf("\x1B[37m");
 }
+
+/**
+ * A member function that returns empty spaces from the field
+ * @return number of empty spaces
+ */
+SMALLTYPE Field::countEmptySpaces(void){
+    SMALLTYPE filledSpaces = 0;
+    for(SMALLTYPE i = 0 ; i < 27 ; i++){
+        filledSpaces += ((pixels[0] >> i) & 1);
+        filledSpaces += ((pixels[1] >> i) & 1);
+        filledSpaces += ((pixels[2] >> i) & 1);
+    }
+
+    return 81 - filledSpaces;
+}
+
+/**
+ * A member function that returns group numbers of empty spaces from the field.
+ * using uint8_t for result. this will represent like following.
+ * [][][][] / [][][][]
+ *    X           Y
+ * For example, if the coordinate was (1,2), it would be represented like
+ * 0001 0010 = 0x12.
+ * The algorithm uses DFS for finding groups.
+ * @return the number of groups of empty spaces
+ */
+SMALLTYPE Field::getEmptySpaceGroups(void){
+    std::stack <SMALLTYPE> coordStack;
+    Field visitedField = Field();
+    SMALLTYPE groupCnt = 0;
+
+    for(SMALLTYPE i = 0 ; i < 9 ; i++){
+        for(SMALLTYPE j = 0 ; j < 9 ; j++){
+            if (!visitedField.getPixelValue(j,i)){ // if cur pos not visited
+                coordStack.push((((j & 0xF) << 4) | (i & 0xF))); // push that coord.
+                while (!coordStack.empty()) {
+                    SMALLTYPE curCoord = coordStack.top(); // pop stack.
+                    coordStack.pop();
+
+                    SMALLTYPE x = (curCoord >> 4) & 0xF;
+                    SMALLTYPE y = curCoord & 0xF;
+                    // if not visited AND is in range from 0 ~ 9 and is 0 then visit.
+                    // do DFS here.
+                    if (((!visitedField.getPixelValue(x, y)) && (((x < 9) && (y < 9)) && ((x >= 0) && (y >= 0)))) &&
+                            (getPixelValue(x, y) == 0)){
+                        visitedField.setPixelValue(x, y, 1); // set visited
+                        // DFS rule : up, down, left, right
+                        coordStack.push((((x & 0xF) << 4) | ((y - 1) & 0xF))); // push UP
+                        coordStack.push((((x & 0xF) << 4) | ((y + 1) & 0xF))); // push DOWN
+                        coordStack.push((((x - 1) & 0xF) << 4) | ((y & 0xF))); // push LEFT
+                        coordStack.push((((x + 1) & 0xF) << 4) | ((y & 0xF))); // push LEFT
+                    }
+                }
+                groupCnt += (getPixelValue(j, i) != 1); // count groups.
+            }
+        }
+    }
+    return groupCnt;
+}

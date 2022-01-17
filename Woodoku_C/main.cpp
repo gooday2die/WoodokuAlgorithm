@@ -64,6 +64,13 @@ int main(void) {
     Shape *allShapes = generateAllShapes();
     Field field = Field();
 
-    BruteForceStupid BFS = BruteForceStupid(allShapes);
-    BFS.run(field);
+
+    heuristicsMethod HM = heuristicsMethod(allShapes);
+    HM.run(field);
+
+    //BruteForceStupid BFS = BruteForceStupid(allShapes);
+    //BFS.run(field);
+
+    //SurvivalMethod SM = SurvivalMethod(allShapes);
+   //SM.run(field);
 }
