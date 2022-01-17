@@ -5,15 +5,13 @@
 #include "Field.h"
 
 
-
+/**
+ * A member function that calculates the score by the current field and clears out the pixels.
+ * If you are going to just "Check" score, please use SMALLTYPE Field::peekScore() instead.
+ * This member function would be called just one time for clearing out the field and calculating the score.
+ * @return returns SMALLTYPE value of score.
+ */
 SMALLTYPE Field::calculateScore(void){
-    /**
-     * A member function that calculates the current score on the field and then clears out the pixels.
-     * This member function uses bit operations instead of typical ways to figure out the scores and clear them out.
-     * This member function will be called 'A LOT' of times while our DFS algorithm. So I designed this function to
-     * take as small amount of time as possible. That being said, I used as little if, conditions as possible and used
-     * Bitwise operations instead.
-     */
     SMALLTYPE streaks = 0;
     char score = 0;
     // Those following arrays are generated since I am going to do a bit operation later with each cleared out fields.
@@ -40,7 +38,6 @@ SMALLTYPE Field::calculateScore(void){
         for(SMALLTYPE j = 0 ; j < 3 ; j++) {
             uint16_t curRow = (pixels[j] >> (9 * (2 - i)) & 0x1FF);
             streaks += (curRow == 0x1FF);
-            //printf("ROW %d %d : %u \n", i , j, ((0xFFFFFFFF + (curRow == 0x1FF)) & curRow) << (9 * 2 - i));
             row_array[j] = row_array[j] | (((0xFFFFFFFF + (((pixels[j] >> (9 * (2 - i))) & 0x1FF) == 0x1FF)) &
                                            (((pixels[j] >> (9 * (2 - i))) & 0x1FF))) << (9 * (2 - i)));
         }
@@ -76,38 +73,29 @@ SMALLTYPE Field::calculateScore(void){
         streaks += (pixels[i] & 0xe07038) == 0xe07038;
         streaks += (pixels[i] & 0x1c0e07) == 0x1c0e07;
 
-        //blk_array[i] = blk_array[i] & (pixels[i] ^ 0x70381C0); // XOR FUCKS it up.
-        //blk_array[i] = blk_array[i] & (pixels[i] ^ 0xe07038);
-        //blk_array[i] = blk_array[i] & (pixels[i] ^ 0x1c0e07);
-        if ((pixels[i] & 0x70381C0) == 0x70381C0) blk_array[i] &= (pixels[i] ^ 0x70381C0);
+        if ((pixels[i] & 0x70381C0) == 0x70381C0) blk_array[i] &= (pixels[i] ^ 0x70381C0); // clear it out.
         if ((pixels[i] & 0xe07038) == 0xe07038) blk_array[i] &= (pixels[i] ^ 0xe07038);
         if ((pixels[i] & 0x1c0e07) == 0x1c0e07) blk_array[i] &= (pixels[i] ^ 0x1c0e07);
-
-        //blk_array[i] = blk_array[i] & (~(pixels[i] & 0x70381C0));  // NOT WORKING . FUCKED UP HERE.
-        //blk_array[i] = blk_array[i] & (~(pixels[i] & 0xe07038));
-        //blk_array[i] = blk_array[i] & (~(pixels[i] & 0x1c0e07));
-
     }
-    for(SMALLTYPE i = 0 ; i < 3 ; i++)
 
     // Do AND operations with all arrays will create a cleared field. Then save it to pixels.
     for(SMALLTYPE i = 0 ; i < 3 ; i++){
-        //printf("RA : %u / CA : %u / BLK %u\n", row_array[i], col_array[i], blk_array[i]);
         pixels[i] = ((row_array[i] & col_array[i]) & blk_array[i]);
     }
-    //printf("Streak : %d\n", streaks);
+
     score = streaks * 18 + 10 * (streaks > 1); // calculate score
     return (score & -(0 < score)); // if negative, return 0.
 }
 
-SMALLTYPE Field::peekScore(void){
-    /**
- * A member function that calculates the current score on the field. This just peeks the score.
- * This member function uses bit operations instead of typical ways to figure out the scores and clear them out.
- * This member function will be called 'A LOT' of times while our DFS algorithm. So I designed this function to
- * take as small amount of time as possible. That being said, I used as little if, conditions as possible and used
- * Bitwise operations instead.
+/**
+ * A member function that calculates the score by the current field.
+ * If you are going to "Check" score and "Clear out" the field, please use SMALLTYPE Field::calculateScore() instead.
+ * This member function is intended to not change the field and just to peek the score. This member function will be
+ * called a lot of times, so I had to optimize this member function to use as little amount of time as possible using
+ * bitwise operations. It would be difficult to understand but will make sense if you read the code.
+ * @return SMALLTYPE value of score.
  */
+SMALLTYPE Field::peekScore(void){
     SMALLTYPE streaks = 0;
     char score = 0;
 
@@ -125,22 +113,13 @@ SMALLTYPE Field::peekScore(void){
         }
     }
 
-    //printf("RA : %u \n", row_array[0]);
-    // printf("RA : %u \n", row_array[1]);
-    //printf("RA : %u \n", row_array[2]);
-
-
     // Calculate rows
     // Using bit operations. Will be going ROW 0 ~ 8 order.
     // Generate a column based on the results
     // Then do AND operation with 0xFFFFFFFF. Then generate a column array
     for(SMALLTYPE i = 0 ; i < 9 ; i++){
-        uint32_t curCol[3] = {0,0,0};
         SMALLTYPE curColSum = 0;
         for(SMALLTYPE j = 0 ; j < 3 ; j++) {
-            curCol[j] = curCol[j] | (((pixels[j] >> (26 - i)) & 1) << (26 - i)); // fucking operator precedence. & , <<
-            curCol[j] = curCol[j] | (((pixels[j] >> (17 - i)) & 1) << (17 - i));
-            curCol[j] = curCol[j] | (((pixels[j] >> (8 - i)) & 1) << (8 - i));
             curColSum += ((pixels[j] >> (26 - i)) & 1) + ((pixels[j] >> (17 - i)) & 1) + ((pixels[j] >> (8 - i)) & 1);
         }
         streaks += curColSum == 9; // this counts 0s as well
@@ -154,28 +133,39 @@ SMALLTYPE Field::peekScore(void){
         streaks += (pixels[i] & 0x70381C0) == 0x70381C0; // check streaks
         streaks += (pixels[i] & 0xe07038) == 0xe07038;
         streaks += (pixels[i] & 0x1c0e07) == 0x1c0e07;
-
     }
 
     score = streaks * 18 + 10 * (streaks > 1); // calculate score
     return (score & -(0 < score)); // if negative, return 0.
 }
 
+/**
+ * A member function that gets a single pixel value from x, y
+ * @param x the x of field
+ * @param y the y of field
+ * @return returns SMALLTYPE value of pixel value.
+ */
 SMALLTYPE Field::getPixelValue(SMALLTYPE x, SMALLTYPE y){
     switch (y) {
         case 0: case 1: case 2: // if 1st sector
             return (pixels[0] >> (9 * (2 - y) + (8 - x)) & 1);
 
-        case 3: case 4: case 5:
+        case 3: case 4: case 5: // if 2nd sector
             return (pixels[1] >> (9 * (5 - y) + (8 - x)) & 1);
 
-        case 6: case 7: case 8:
+        case 6: case 7: case 8: // if 3rd sector
             return (pixels[2] >> (9 * (8 - y) + (8 - x)) & 1);
         default:
             return 0;
     }
 }
 
+/**
+ * A member function that sets pixel values into specific coordinates
+ * @param x the x value
+ * @param y the y value
+ * @param value the value to set
+ */
 void Field::setPixelValue(SMALLTYPE x, SMALLTYPE y, SMALLTYPE value){
     switch (y) {
         case 0: case 1: case 2: // if 1st sector.
@@ -190,11 +180,13 @@ void Field::setPixelValue(SMALLTYPE x, SMALLTYPE y, SMALLTYPE value){
     }
 }
 
+/**
+ * A member function that prints out the field using color.
+ * Red would be 1 represented.
+ * Green would be 0 represented.
+ */
 void Field::printField(void){
     printf("\n===== FIELD =====\n");
-    //printf("%u\n", pixels[0]);
-    //printf("%u\n", pixels[1]);
-    //printf("%u\n", pixels[2]);
 
     for (SMALLTYPE i = 0 ; i < 9 ; i++){
         for (SMALLTYPE j = 0 ; j < 9 ; j++){

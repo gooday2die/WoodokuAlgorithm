@@ -2,4 +2,4 @@
 *-Copy
 Woodoku_C/cmake-build-debug/
 Woodoku_C/.idea/
-Woodoku_C/*.out
+*.out

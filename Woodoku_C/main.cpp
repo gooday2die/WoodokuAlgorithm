@@ -3,7 +3,10 @@
 
 // SMALLTYPE can be uint8_t or unsigned char. Just wanted to use 'a' byte.
 
-
+/**
+ * A function that generates all shapes.
+ * @return all generates shapes.
+ */
 Shape* generateAllShapes(void){
     Shape* allShapes = (Shape*)malloc(sizeof(Shape) * 44);
 
@@ -57,62 +60,10 @@ Shape* generateAllShapes(void){
     return allShapes;
 }
 
-int main(void){
-    Shape* allShapes = generateAllShapes();
+int main(void) {
+    Shape *allShapes = generateAllShapes();
     Field field = Field();
 
-    /**
-
-    for(SMALLTYPE i = 0 ; i < 6 ; i++) field.setPixelValue(i, 0, 1);
-    //for(SMALLTYPE i = 0 ; i < 9 ; i++) field.setPixelValue(0, i, 1);
-
-    field.setPixelValue(0, 3, 1);
-    field.setPixelValue(0, 4, 1);
-    field.setPixelValue(0, 5, 1);
-    field.setPixelValue(1, 3, 1);
-    field.setPixelValue(1, 4, 1);
-    field.setPixelValue(1, 5, 1);
-    field.setPixelValue(2, 3, 1);
-    field.setPixelValue(2, 4, 1);
-    field.setPixelValue(2, 5, 1);
-
-
-    field.printField();
-    printf("SCORE : %d\n", field.calculateScore());
-    field.printField();
-
-       */
     BruteForceStupid BFS = BruteForceStupid(allShapes);
     BFS.run(field);
-
-
-    /**
-    for(SMALLTYPE i = 0 ; i < 9 ; i ++){
-        field.setPixelValue(i, 0, 1);
-        field.setPixelValue(0, i, 1);
-    }
-
-    field.setPixelValue(3, 0, 1);
-    field.setPixelValue(3, 1, 1);
-    field.setPixelValue(3, 2, 1);
-    field.setPixelValue(4, 0, 1);
-    field.setPixelValue(4, 1, 1);
-    field.setPixelValue(4, 2, 1);
-    field.setPixelValue(5, 0, 1);
-    field.setPixelValue(5, 1, 1);
-    field.setPixelValue(5, 2, 1);
-
-
-    field.printField();
-
-    SMALLTYPE score = field.calculateScore();
-
-    //printf("%d\n", allShapes[0].canPutIn(0,0,field));
-
-    //allShapes[0].printShape();
-    //field = allShapes[0].putIn(0,1,field);
-    field.printField();
-    return 0;
-     **/
-
 }

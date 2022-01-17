@@ -5,7 +5,14 @@
 #include "Algorithm.h"
 
 
-
+/**
+ * A member function for class BruteForceStupid for literally brute forcing every possible combinations and looking
+ * for the best future with the best score. Calculates in 6 for loops starting from (0,0,0,0,0,0) to (9,9,9,9,9,9).
+ * Worst case scenario, it would be 9^6.
+ * @param curField The current field to brute force
+ * @param shapeList The shapes to brute force with
+ * @return returns Best Future result in bfResult struct type.
+ */
 bfResult BruteForceStupid::findBestFuture(Field curField, Shape* shapeList){
     bfResult result;
     result.score = 0;
@@ -23,9 +30,7 @@ bfResult BruteForceStupid::findBestFuture(Field curField, Shape* shapeList){
                                     Field newField1 = shapeList[1].putIn(k, l, newField0);
                                     if (shapeList[2].canPutIn(m, n, newField1)) {
                                         Field newField2 = shapeList[2].putIn(m, n, newField1);
-                                        //newField2.printField();
                                         SMALLTYPE score = newField2.peekScore();
-                                        //printf("SCORE : %d", score);
                                         result.futureCnt++;
                                         if (curMAX <= score) {
                                             curMAX = score;
@@ -51,7 +56,10 @@ bfResult BruteForceStupid::findBestFuture(Field curField, Shape* shapeList){
     printf("MAX Score : %d", curMAX);
     return result;
 }
-
+/**
+ * A member function for class BruteForceStupid for running the game.
+ * @param curField The current field itself. Shall be clean and without any pixels filled.
+ */
 void BruteForceStupid::run(Field curField){
     printf("NOW RUNNING GAME\n");
     std::random_device rd;
@@ -99,7 +107,7 @@ void BruteForceStupid::run(Field curField){
         //scanf("%d", &i);
 
         unsigned int microsecond = 100000;
-        //usleep(3 * microsecond);//sleeps for 3 second
+        usleep(3 * microsecond);//sleeps for 3 second
     }
     return;
 }

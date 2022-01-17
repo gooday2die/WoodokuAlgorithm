@@ -16,17 +16,11 @@
 
 #define SMALLTYPE uint8_t
 
-
+/**
+ * A class for representing field.
+ * Using 3 uint32_t variables for representing 9*9 field.
+ */
 class Field{
-    /**
-     * A class for field. Total pixels are 9 * 9
-     * So can be represented as 27 * 3
-     * 27bit < 32 bit
-     * So we are going to divide 3 parts from top to bottom.
-     * 1st pixels 8 byte will cover from 0 ~ 2 row
-     * 2nd pixels 8 byte will cover from 3 ~ 5 row
-     * 3rd pixels 8 byte will cover from 6 ~ 8 row
-     */
 private:
     uint32_t pixels[3]{};
 public:
@@ -38,6 +32,5 @@ public:
     void setPixelValue(SMALLTYPE, SMALLTYPE, SMALLTYPE);
     SMALLTYPE calculateScore(void);
     SMALLTYPE peekScore(void);
-    uint8_t getSector(SMALLTYPE);
     void printField(void);
 };

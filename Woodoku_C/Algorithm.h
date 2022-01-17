@@ -13,6 +13,9 @@
 #include<unistd.h>
 #include <time.h>
 
+/**
+ * A struct for saving BestFuture results.
+ */
 typedef struct _bfResult{
     SMALLTYPE score;
     Field BestFuture;
@@ -27,10 +30,17 @@ typedef struct _bfResult{
     unsigned long futureCnt;
 }bfResult;
 
+/**
+ * A class for brute forcing stupid.
+ */
 class BruteForceStupid{
 private:
     Shape* allShapes;
 public:
+    /**
+     * A constructor member function for class BruteForceStupid
+     * @param shapeArray the shape array.
+     */
     BruteForceStupid(Shape* shapeArray){
         allShapes = shapeArray;
     }
