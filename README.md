@@ -4,6 +4,28 @@ Woodoku is a mobile game that is kinda like Tetris. You can move blocks into spe
 - [Android Google Play](https://play.google.com/store/apps/details?id=com.tripledot.woodoku&hl=ko&gl=US) 
 
 
+## Versions
+Currently there are two versions of this product.
+- Python : Using Numpy for ease of use. **Slow but code is easy to understand**.
+- C++ (using C functions but using class from C++) : Using old style bit operations for optimization and performance. **Fast but code is difficult to understand without knowledge of bit operations**
+
+With the same brute forcing technique, **C++ version runs in 0.171 sec at the same time Python version runs over 10.4 sec**. C++ is recommended for fast results and optimization. 
+
+
+## Does it work?
+### Its works Okay.
+My personal Woodoku Record is around 2100 points. However, even my Python version brute force Woodoku algorithm can beat up to **6285 points**. C++ version is not perfect yet, however it can score up to **4062 points**. Both measured at 2022-01-17 and has enough room for improvements.
+
+### Python Version Proof
+![YeahItWorks1](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/YeahItWorks1.png)
+
+### C++ Version Proof
+![YeahItWorks1](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/YeahItWorks2.png)
+
+## Implemented Algorithms 
+Currently implemented algorithms are like following:
+- **Brute Force**: Generate every single possible cases and look for the best case scenario.
+
 ## Types of Woodoku Blocks
 ### There are total 44 of Wodoku Blocks avaiable.
 ![slide1](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/Slide1.PNG)
@@ -12,12 +34,4 @@ Woodoku is a mobile game that is kinda like Tetris. You can move blocks into spe
 ![slide4](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/Slide4.PNG)
 ![slide5](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/Slide5.PNG)
 ![slide6](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/Slide6.PNG)
-
----
-## Algorithm Design
-### Heuristic Idea & Calculation
-![slide11](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/Slide11.PNG)
-![slide12](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/Slide12.PNG)
-![slide13](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/Slide13.PNG)
-![slide14](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/Slide14.PNG)
 
