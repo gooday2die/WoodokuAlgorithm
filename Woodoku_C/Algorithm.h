@@ -10,7 +10,7 @@
 
 #include "Shape.h"
 #include <random>
-#include<unistd.h>
+#include <unistd.h>
 #include <time.h>
 
 /**
@@ -30,37 +30,43 @@ typedef struct _bfResult{
     unsigned long futureCnt;
 }bfResult;
 
-
 /**
- * A class for brute forcing stupidly.
+ * A bass class for algorithms.
+ * Member function findBestResult will be overridden by child classes and it would be called from runAlgorithm function.
  */
-class BruteForceStupid{
-private:
-    Shape* allShapes;
+class Algorithm{
 public:
-    /**
-     * A constructor member function for class BruteForceStupid
-     * @param shapeArray the shape array.
-     */
-    BruteForceStupid(Shape* shapeArray){
-        allShapes = shapeArray;
+    Algorithm(){
     }
-    void run(Field);
-    bfResult findBestFuture(Field, Shape*);
+
+    virtual bfResult findBestFuture(Field, Shape*){
+        bfResult emptyResult;
+        return emptyResult;
+    };
 };
 
 /**
- * A class for surviving method. Counts the best future with the most empty spaces.
+ * An algorithm class for scoring method.
+ * Just measures scores and finds out the combinations.
+ */
+
+class ScoringMethod : public Algorithm{
+public:
+    ScoringMethod() : Algorithm(){
+        printf("Algorithm Info : Scoring Method\n");
+    }
+    bfResult findBestFuture(Field, Shape*) override;
+};
+
+/**
+ * An algorithm class for surviving method. Counts the best future with the most empty spaces.
  * Does not work that well.
  */
-class SurvivalMethod{
-private:
-    Shape* allShapes;
+class SurvivalMethod : public Algorithm{
 public:
-    SurvivalMethod(Shape* shapeArray){
-        allShapes = shapeArray;
+    SurvivalMethod() : Algorithm(){
+        printf("Algorithm Info : Survival Method\n");
     }
-    void run(Field);
     bfResult findBestFuture(Field, Shape*);
 };
 
@@ -69,13 +75,15 @@ public:
  * using simple heuristics :
  * Best scoring + (81 - number of empty groups) / 10
  */
-class heuristicsMethod{
-private:
-    Shape* allShapes;
+class HeuristicsMethod : public Algorithm{
 public:
-    heuristicsMethod(Shape* shapeArray){
-        allShapes = shapeArray;
+    HeuristicsMethod() : Algorithm(){
+        printf("Algorithm Info : Heuristics Method\n");
     }
-    void run(Field);
-    bfResult findBestFuture(Field, Shape*);
+    bfResult findBestFuture(Field, Shape*) override;
 };
+
+/**
+ * A function for polymorphism.
+ */
+void runAlgorithm(Algorithm*, Field, Shape*);

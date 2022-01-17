@@ -8,7 +8,7 @@
  * @return all generates shapes.
  */
 Shape* generateAllShapes(void){
-    Shape* allShapes = (Shape*)malloc(sizeof(Shape) * 44);
+    Shape* allShapes = (Shape*)malloc(sizeof(Shape) * 49);
 
     allShapes[0].setPixels(1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     allShapes[1].setPixels(1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -53,7 +53,12 @@ Shape* generateAllShapes(void){
     allShapes[40].setPixels(1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     allShapes[41].setPixels(0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     allShapes[42].setPixels(0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    allShapes[43].setPixels(1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    allShapes[43].setPixels(0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    allShapes[44].setPixels(1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    allShapes[45].setPixels(1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    allShapes[46].setPixels(1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    allShapes[47].setPixels(1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    allShapes[48].setPixels(0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
     printf("Generated all shapes\n");
 
@@ -64,13 +69,11 @@ int main(void) {
     Shape *allShapes = generateAllShapes();
     Field field = Field();
 
+    HeuristicsMethod* a = new HeuristicsMethod();
+    //SurvivalMethod* a = new SurvivalMethod();
+    //ScoringMethod* a = new ScoringMethod();
 
-    heuristicsMethod HM = heuristicsMethod(allShapes);
-    HM.run(field);
+    runAlgorithm(a, field, allShapes);
 
-    //BruteForceStupid BFS = BruteForceStupid(allShapes);
-    //BFS.run(field);
-
-    //SurvivalMethod SM = SurvivalMethod(allShapes);
-   //SM.run(field);
+    return 0;
 }
