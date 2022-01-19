@@ -72,6 +72,7 @@ int main(void) {
     HeuristicsMethod* a = new HeuristicsMethod();
     //SurvivalMethod* a = new SurvivalMethod();
     //ScoringMethod* a = new ScoringMethod();
+    //OneByOneMethod* a = new OneByOneMethod();
 
     runAlgorithm(a, field, allShapes);
 

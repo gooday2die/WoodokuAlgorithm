@@ -83,6 +83,15 @@ public:
     bfResult findBestFuture(Field, Shape*) override;
 };
 
+class OneByOneMethod : public Algorithm{
+public:
+    OneByOneMethod() : Algorithm(){
+        printf("Algorithm Info : Heuristics Method\n");
+    }
+    bfResult findBestFuture(Field, Shape*) override;
+};
+
+
 /**
  * A function for polymorphism.
  */
