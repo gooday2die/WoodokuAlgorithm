@@ -86,7 +86,9 @@ public:
 };
 
 /**
- * A class for thread heuristics. Figures out every single possible combination with every orders. 
+ * A class for thread heuristics. Figures out every single possible combination with every orders.
+ * using simple heuristics :
+ * Best scoring + (81 - number of empty groups) / 10 + (81 - number of filled groups) / 10
  */
 class ThreadHeuristicMethod : public Algorithm{
 public:

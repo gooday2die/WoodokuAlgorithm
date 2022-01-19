@@ -11,7 +11,7 @@ Finds out which positioning of 3 pieces result the most empty spaces. If there a
 ### HeuristicsMethod
 Finds out which positioning of 3 pieces result the most heuristics score. If there are multiple ones with the same result, the method picks out the last one. Implemented as `heuristicsMethod` class. In this class, it calculates heuristics score in the following equation below. (Till now, 2022-01-17)
 
-    HeuristcsScore = Score + (81 - Empty Space Groups) / 10
+    HeuristcsScore = Score + (81 - Empty Space Groups) / 10 + (81 - Filled Groups) / 10
 It calculates empty space groups by using DFS and figure out how many empty space groups are there in the field by this combination. I am trying to make heuristics formula that minimizes the number of same heuristics score. If that is minimized, the function will have less chance of picking one randomly without any reason.
 
 ### HeuristicsThreadMethod

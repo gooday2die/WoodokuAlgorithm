@@ -130,7 +130,8 @@ void ThreadHeuristicMethod::algorithmThread(Field curField, Shape* shapeList, SM
                                         Field newField2 = shapeList[z].putIn(m, n, newField1);
                                         score += newField2.peekScore();
                                         SMALLTYPE emptyGroups = newField2.getEmptySpaceGroups(); // number of empty groups.
-                                        SMALLTYPE heuristicScore = score + ((81 - emptyGroups) / 10);
+                                        SMALLTYPE filledGroups = newField2.getFilledSpaceGroups();
+                                        SMALLTYPE heuristicScore = score + ((81 - emptyGroups) / 10) + ((81 - filledGroups) / 10);
 
                                         pResult->futureCnt++;
                                         if (curMAX <= heuristicScore) {
@@ -189,8 +190,10 @@ bfResult ThreadHeuristicMethod::findBestFuture(Field curField, Shape* shapeList)
     t6.join();
 
     for(SMALLTYPE i = 0 ; i < 6 ; i++) {
-        printf("Thread %d : Total Future %ld / MAX Score %d \n", i, resultList[i].futureCnt, ((81 - resultList[bestIndex].BestFuture.getEmptySpaceGroups())) / 10);
-        heuristicsList[i] = resultList[i].score + ((81 - (resultList[i].BestFuture.getEmptySpaceGroups())) / 10);
+        heuristicsList[i] = resultList[i].score + ((81 - (resultList[i].BestFuture.getEmptySpaceGroups())) / 10) +
+                ((81 - (resultList[i].BestFuture.getFilledSpaceGroups())) / 10);
+        printf("Thread %d : Total Future %ld / MAX Score %d \n", i, resultList[i].futureCnt, heuristicsList[i]);
+
         if (bestHeuristic <= heuristicsList[i]) {
             if(bestFutureCnt <= resultList[i].futureCnt){
                 bestHeuristic = heuristicsList[i];
@@ -201,7 +204,9 @@ bfResult ThreadHeuristicMethod::findBestFuture(Field curField, Shape* shapeList)
     }
 
     printf("Best index : %d\n", bestIndex);
-    printf("MAX Score : %d / Group Score : %d\n", resultList[bestIndex].score, ((81 - resultList[bestIndex].BestFuture.getEmptySpaceGroups())) / 10);
+    printf("MAX Score : %d / Empty Group Score : %d / Filled Group Score : %d\n", resultList[bestIndex].score,
+           ((81 - resultList[bestIndex].BestFuture.getEmptySpaceGroups())) / 10,
+           ((81 - resultList[bestIndex].BestFuture.getFilledSpaceGroups())) / 10);
     return resultList[bestIndex];
 }
 
@@ -327,14 +332,16 @@ void runAlgorithm(Algorithm* a, Field curField, Shape* allShapes){
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> dis(0, 48);
-
+    printf("Started Game\n");
     Shape curShapes[3];
     bfResult bestFuture;
     unsigned long score = 0;
 
     while(1){
+        SMALLTYPE shapeIndex[3];
         for (SMALLTYPE  i = 0 ; i < 3 ; i++){
-            curShapes[i] = allShapes[dis(gen)];
+            shapeIndex[i] = dis(gen);
+            curShapes[i] = allShapes[shapeIndex[i]];
             curShapes[i].printShape();
         }
         curField.printField();
@@ -346,7 +353,12 @@ void runAlgorithm(Algorithm* a, Field curField, Shape* allShapes){
         printf("\x1B[37m");
         // Print red if futures are less than 500
         if (bestFuture.futureCnt == 0){
-            printf("\n\nGAMEOVER...\nSCORE : %ld\n", score);
+            printf("\n\nGAMEOVER...\n");
+            FILE *fp;
+            fp = fopen("whokilled.txt", "a+");
+
+            fprintf(fp, "%d %d %d : %ld\n", shapeIndex[0], shapeIndex[1], shapeIndex[2], score);
+            fclose(fp);
             break;
         }
 
@@ -368,10 +380,10 @@ void runAlgorithm(Algorithm* a, Field curField, Shape* allShapes){
         printf("Max Score : %d\n", bestFuture.score);
         printf("MOVING : %d %d %d %d %d %d\n", bestFuture.coords_i, bestFuture.coords_j, bestFuture.coords_k, bestFuture.coords_l, bestFuture.coords_m, bestFuture.coords_n);
         printf("\nScore %ld (+%d)\n", score, newScore);
-        //scanf("%d", &i);
 
         unsigned int microsecond = 100000;
         usleep(3 * microsecond);//sleeps for 3 second
     }
+    printf("Score : %ld\n" , score);
     return;
 }

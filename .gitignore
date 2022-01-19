@@ -3,3 +3,5 @@
 Woodoku_C/cmake-build-debug/
 Woodoku_C/.idea/
 *.out
+*.swp
+Woodoku_C/whokilled.txt

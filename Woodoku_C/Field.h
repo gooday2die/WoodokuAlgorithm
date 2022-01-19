@@ -34,5 +34,7 @@ public:
     SMALLTYPE peekScore(void);
     SMALLTYPE countEmptySpaces(void);
     SMALLTYPE getEmptySpaceGroups(void);
+    SMALLTYPE getFilledSpaceGroups(void);
+
     void printField(void);
 };
