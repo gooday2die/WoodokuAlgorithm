@@ -12,6 +12,8 @@
 #include <random>
 #include <unistd.h>
 #include <time.h>
+#include <thread>
+
 
 /**
  * A struct for saving BestFuture results.
@@ -83,12 +85,15 @@ public:
     bfResult findBestFuture(Field, Shape*) override;
 };
 
-class OneByOneMethod : public Algorithm{
+/**
+ * A class for thread heuristics. Figures out every single possible combination with every orders. 
+ */
+class ThreadHeuristicMethod : public Algorithm{
 public:
-    OneByOneMethod() : Algorithm(){
-        printf("Algorithm Info : Heuristics Method\n");
+    ThreadHeuristicMethod() : Algorithm(){
     }
     bfResult findBestFuture(Field, Shape*) override;
+    void algorithmThread(Field, Shape*, SMALLTYPE, SMALLTYPE, SMALLTYPE, SMALLTYPE, bfResult*);
 };
 
 

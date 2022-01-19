@@ -14,8 +14,24 @@ Finds out which positioning of 3 pieces result the most heuristics score. If the
     HeuristcsScore = Score + (81 - Empty Space Groups) / 10
 It calculates empty space groups by using DFS and figure out how many empty space groups are there in the field by this combination. I am trying to make heuristics formula that minimizes the number of same heuristics score. If that is minimized, the function will have less chance of picking one randomly without any reason.
 
+### HeuristicsThreadMethod
+The older `HeuristicsMethod` had several flaws.
+- Order of placing shapes were fixed to 0, 1, 2 order.
+- Did NOT clear field while blocks were being places.
+- If it could not put shapes in 0, 1, 2 order, it gave up.
+
+The new `HeuristicsThreadMethod` was made to fix both problems. This is designed to find out every single possible cases that occur not just by putting shapes in 0, 1, 2. This tries every order possible. That is 3! cases. However, since this method has to calculate 6 more times than original `HeuristicsMethod`. Thus Threading was introduced. Every possible cases which is
+- 0, 1, 2 -> Thread 1
+- 0, 2, 1 -> Thread 2
+- 1, 0, 2 -> Thread 3
+- 1, 2, 0 -> Thread 4
+- 2, 1, 0 -> Thread 5
+- 2, 0, 1 -> Thread 6
+Are each put on different thread to save computing time. However, due to threading overhead, it takes a bit more time compared to the original `HeuristicsMethod`. But can survive a slight more turns that it originally would have.
+
+
 ### Comparison
-![comp_2022_01_17.png](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/comp_2022_01_17.png)
+![comp_2022_01_19.png](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/comp_2022_01_19.png)
 
 ## So.. how is this everything really implemented?
 ### Short Answer : Bitwise Operations.
@@ -32,10 +48,24 @@ A Woodoku shape is represented as a Class. In that class, there is a `private` `
 
 - **Indexing**: Similar to Woodokup Maps. check `bool Shape::getPixel(SMALLTYPE x, SMALLTYPE y)` for more information.
 - **Checking Blocks with Field**: Since whether if you are using brute force or using a good algorithms, we are going to be checking if a block can be fit into the field. However, till now, the checking process is NOT done by Bitwise Operations. **TODO : Making every checking process done by Bitwise Operations**
+
 ## So... Is this really fast and does it work?
 ### Its fast and works Okay.
-My personal Woodoku Record is around 2100 points. However, even my Python version brute force Woodoku algorithm can beat up to **6285 points**. C++ version is not perfect yet, however it can score up to **4062 points**. Both measured at 2022-01-17 and has enough room for improvements.
+My personal Woodoku Record is around 2100 points. However, even my Python version brute force Woodoku algorithm can beat up to **6285 points**. C++ version is not perfect yet, however it can score up to **8209 points**. Both measured at 2022-01-19 and has enough room for improvements.
+
+### Python Version Proof
+![YeahItWorks1](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/YeahItWorks1.png)
 
 ### C++ Version Proof
 ![YeahItWorks1](https://github.com/gooday2die/WoodokuAlgorithm/raw/main/picture/YeahItWorks2.png)
 
+
+## Your algorithm is dumb. I want mine in it
+Yeah I admit the fact that I am using 6 nested for loops for these algorithms. Also I am a noob for computer science and still in learning process. If you happen to have better idea than mine, you can try making your own algorithm. 
+1. Make a child algorithm of class `Algorithm`. 
+2. Override member function `findBestFuture` with using your algorithm. 
+3. Return `bfResult` variable as return value for the algorithm.
+4. from `main.cpp` generate your algorithm object and throw it as argument for `runAlgorithm` 
+
+# Till now I found out that...
+- This is too much luck based game. Even if with a well designed algorithm, 3 turns of bad pieces in a row can ruin the field. Even Tetris has a rule of specific shapes and tiles coming in a order, however this does NOT have any patterns.

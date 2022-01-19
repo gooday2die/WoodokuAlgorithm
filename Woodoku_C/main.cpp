@@ -69,11 +69,11 @@ int main(void) {
     Shape *allShapes = generateAllShapes();
     Field field = Field();
 
-    HeuristicsMethod* a = new HeuristicsMethod();
+    //HeuristicsMethod* a = new HeuristicsMethod();
     //SurvivalMethod* a = new SurvivalMethod();
     //ScoringMethod* a = new ScoringMethod();
     //OneByOneMethod* a = new OneByOneMethod();
-
+    ThreadHeuristicMethod* a = new ThreadHeuristicMethod();
     runAlgorithm(a, field, allShapes);
 
     return 0;

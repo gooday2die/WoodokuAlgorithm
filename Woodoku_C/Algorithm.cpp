@@ -57,277 +57,152 @@ bfResult SurvivalMethod::findBestFuture(Field curField, Shape* shapeList){
     return result;
 }
 
-bfResult OneByOneMethod::findBestFuture(Field curField, Shape* shapeList){
-    bfResult result;
-    result.score = 0;
-    result.futureCnt = 0;
-    bfResult results[3]; // block 0, 1
-    results[0].futureCnt = 0;
-    results[0].score = 0;
-    results[1].futureCnt = 0;
-    results[1].score = 0;
-    results[2].futureCnt = 0;
-    results[2].score = 0;
-    SMALLTYPE curBest0 = 0 ;
-    for (SMALLTYPE i = 0 ; i < 9 ; i++){
-        for (SMALLTYPE j = 0 ; j < 9 ; j++){
-            if(shapeList[0].canPutIn(j, i, curField)){ // try 0, 1, 2 and 0, 2, 1
-                Field newField0 = shapeList[0].putIn(j, i, curField);
-                SMALLTYPE score0 = newField0.peekScore();
-                if(curBest0 <= score0){ // try 1 -> 2 order.
-                    curBest0 = score0;
-                    SMALLTYPE curBest1 = 0;
-                    for(SMALLTYPE k = 0 ; k < 9 ; k++) {
-                        for (SMALLTYPE l = 0; l < 9; l++) {
-                            if (shapeList[1].canPutIn(l, k, newField0)) { // try 2.
-                                Field newField1 = shapeList[1].putIn(l, k, newField0);
-                                SMALLTYPE score1 = newField1.peekScore();
-                                if (curBest1 <= score1) { // if we can put second piece, try last one.
-                                    curBest1 = score1;
-                                    SMALLTYPE curBest2 = 0;
-                                    for (SMALLTYPE m = 0; m < 9; m++) {
-                                        for (SMALLTYPE n = 0; n < 9; n++) {
-                                            if (shapeList[2].canPutIn(n, m, newField1)) {
-                                                Field newField2 = shapeList[2].putIn(l, k, newField1);
-                                                //printf("Found at least one possible case : 0 -> 1 -> 2\n");
-                                                SMALLTYPE score2 = newField2.peekScore();
-                                                newField2.calculateScore();
-                                                if (curBest2 <= score2) {
-                                                    curBest2 = score2;
-                                                    results[0].futureCnt++; // we at least have one survival case.
-                                                    results[0].score = score0 + score1 + score2;
-                                                    results[0].Step1 = newField0;
-                                                    results[0].Step2 = newField1;
-                                                    results[0].BestFuture = newField2;
-                                                    results[0].coords_i = i;
-                                                    results[0].coords_j = j;
-                                                    results[0].coords_k = k;
-                                                    results[0].coords_l = l;
-                                                    results[0].coords_m = m;
-                                                    results[0].coords_n = n;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    for(SMALLTYPE k = 0 ; k < 9 ; k++){
-                        for(SMALLTYPE l = 0 ; l < 9 ; l++){
-                            if (shapeList[2].canPutIn(l, k, newField0)){ // t.
-                                Field newField1 = shapeList[2].putIn(l, k, newField0);
-                                SMALLTYPE score1 = newField1.peekScore();
-                                if(curBest1 <= score1){ // if we can put second piece, try last one.
-                                    curBest1 = score1;
-                                    for (SMALLTYPE m = 0 ; m < 9 ; m++){
-                                        for (SMALLTYPE n = 0 ; n < 9 ; n++){
-                                            if(shapeList[1].canPutIn(n, m , newField1)){
-                                                Field newField2 = shapeList[1].putIn(l, k, newField1);
-                                                //printf("Found at least one possible case : 0 -> 2 -> 1\n");
-                                                SMALLTYPE score2 = newField2.peekScore();
-                                                newField2.calculateScore();
-                                                if ((score0 + score1 + score2) >= results[0].score){
-                                                    results[0].futureCnt++;
-                                                    results[0].score = score0 + score1 + score2; // update one more
-                                                    results[0].Step1 = newField0;
-                                                    results[0].Step2 = newField1;
-                                                    results[0].BestFuture = newField2;
-                                                    results[0].coords_i = i;
-                                                    results[0].coords_j = j;
-                                                    results[0].coords_k = k;
-                                                    results[0].coords_l = l;
-                                                    results[0].coords_m = m;
-                                                    results[0].coords_n = n;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if(shapeList[1].canPutIn(j, i, curField)){ // try 1, 0, 2 and 1, 2, 0
-                Field newField0 = shapeList[0].putIn(j, i, curField);
-                SMALLTYPE score0 = newField0.peekScore();
-                if(curBest0 <= score0){ //
-                    curBest0 = score0;
-                    SMALLTYPE curBest1 = 0;
-                    for(SMALLTYPE k = 0 ; k < 9 ; k++) {
-                        for (SMALLTYPE l = 0; l < 9; l++) {
-                            if (shapeList[0].canPutIn(l, k, newField0)) { // try 2.
-                                Field newField1 = shapeList[0].putIn(l, k, newField0);
-                                SMALLTYPE score1 = newField1.peekScore();
-                                if (curBest1 <= score1) { // if we can put second piece, try last one.
-                                    curBest1 = score1;
-                                    SMALLTYPE curBest2 = 0;
-                                    for (SMALLTYPE m = 0; m < 9; m++) {
-                                        for (SMALLTYPE n = 0; n < 9; n++) {
-                                            if (shapeList[2].canPutIn(n, m, newField1)) {
-                                                Field newField2 = shapeList[2].putIn(l, k, newField1);
-                                                //printf("Found at least one possible case : 1 -> 0 -> 2\n");
-                                                SMALLTYPE score2 = newField2.peekScore();
-                                                newField2.calculateScore();
-                                                if (curBest2 <= score2) {
-                                                    curBest2 = score2;
-                                                    results[1].futureCnt++; // we at least have one survival case.
-                                                    results[1].score = score0 + score1 + score2;
-                                                    results[1].Step1 = newField0;
-                                                    results[1].Step2 = newField1;
-                                                    results[1].BestFuture = newField2;
-                                                    results[1].coords_i = i;
-                                                    results[1].coords_j = j;
-                                                    results[1].coords_k = k;
-                                                    results[1].coords_l = l;
-                                                    results[1].coords_m = m;
-                                                    results[1].coords_n = n;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    for(SMALLTYPE k = 0 ; k < 9 ; k++){
-                        for(SMALLTYPE l = 0 ; l < 9 ; l++){
-                            if (shapeList[2].canPutIn(l, k, newField0)){ // try 2.
-                                Field newField1 = shapeList[2].putIn(l, k, newField0);
-                                SMALLTYPE score1 = newField1.peekScore();
-                                if(curBest1 <= score1){ // if we can put second piece, try last one.
-                                    curBest1 = score1;
-                                    for (SMALLTYPE m = 0 ; m < 9 ; m++){
-                                        for (SMALLTYPE n = 0 ; n < 9 ; n++){
-                                            if(shapeList[0].canPutIn(n, m , newField1)){
-                                                Field newField2 = shapeList[0].putIn(l, k, newField1);
-                                                //printf("Found at least one possible case : 1 -> 2 -> 0\n");
-                                                SMALLTYPE score2 = newField2.peekScore();
-                                                newField2.calculateScore();
-                                                if ((score0 + score1 + score2) >= results[0].score){
-                                                    results[1].futureCnt++;
-                                                    results[1].score = score0 + score1 + score2; // update one more
-                                                    results[1].Step1 = newField0;
-                                                    results[1].Step2 = newField1;
-                                                    results[1].BestFuture = newField2;
-                                                    results[1].coords_i = i;
-                                                    results[1].coords_j = j;
-                                                    results[1].coords_k = k;
-                                                    results[1].coords_l = l;
-                                                    results[1].coords_m = m;
-                                                    results[1].coords_n = n;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if(shapeList[2].canPutIn(j, i, curField)){ // try 2, 0, 1 and 2, 1, 0
-                Field newField0 = shapeList[2].putIn(j, i, curField);
-                SMALLTYPE score0 = newField0.peekScore();
-                if(curBest0 <= score0){ // try 1 -> 2 order.
-                    curBest0 = score0;
-                    SMALLTYPE curBest1 = 0;
-                    for(SMALLTYPE k = 0 ; k < 9 ; k++) {
-                        for (SMALLTYPE l = 0; l < 9; l++) {
-                            if (shapeList[0].canPutIn(l, k, newField0)) { // try 2.
-                                Field newField1 = shapeList[0].putIn(l, k, newField0);
-                                SMALLTYPE score1 = newField1.peekScore();
-                                if (curBest1 <= score1) { // if we can put second piece, try last one.
-                                    curBest1 = score1;
-                                    SMALLTYPE curBest2 = 0;
-                                    for (SMALLTYPE m = 0; m < 9; m++) {
-                                        for (SMALLTYPE n = 0; n < 9; n++) {
-                                            if (shapeList[1].canPutIn(n, m, newField1)) {
-                                                Field newField2 = shapeList[1].putIn(l, k, newField1);
-                                                //printf("Found at least one possible case : 2 -> 0 -> 1\n");
-                                                SMALLTYPE score2 = newField2.peekScore();
-                                                newField2.calculateScore();
-                                                if (curBest2 <= score2) {
-                                                    curBest2 = score2;
-                                                    results[2].futureCnt++; // we at least have one survival case.
-                                                    results[2].score = score0 + score1 + score2;
-                                                    results[2].Step1 = newField0;
-                                                    results[2].Step2 = newField1;
-                                                    results[2].BestFuture = newField2;
-                                                    results[2].coords_i = i;
-                                                    results[2].coords_j = j;
-                                                    results[2].coords_k = k;
-                                                    results[2].coords_l = l;
-                                                    results[2].coords_m = m;
-                                                    results[2].coords_n = n;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    for(SMALLTYPE k = 0 ; k < 9 ; k++){
-                        for(SMALLTYPE l = 0 ; l < 9 ; l++){
-                            if (shapeList[1].canPutIn(l, k, newField0)){ // try 2.
-                                Field newField1 = shapeList[1].putIn(l, k, newField0);
-                                SMALLTYPE score1 = newField1.peekScore();
-                                if(curBest1 <= score1){ // if we can put second piece, try last one.
-                                    curBest1 = score1;
-                                    for (SMALLTYPE m = 0 ; m < 9 ; m++){
-                                        for (SMALLTYPE n = 0 ; n < 9 ; n++){
-                                            if(shapeList[0].canPutIn(n, m , newField1)){
-                                                Field newField2 = shapeList[0].putIn(l, k, newField1);
-                                                //printf("Found at least one possible case : 2 -> 1 -> 0\n");
-                                                SMALLTYPE score2 = newField2.peekScore();
-                                                newField2.calculateScore();
-                                                if ((score0 + score1 + score2) >= results[0].score){
-                                                    results[2].futureCnt++;
-                                                    results[2].score = score0 + score1 + score2; // update one more
-                                                    results[2].Step1 = newField0;
-                                                    results[2].Step2 = newField1;
-                                                    results[2].BestFuture = newField2;
-                                                    results[2].coords_i = i;
-                                                    results[2].coords_j = j;
-                                                    results[2].coords_k = k;
-                                                    results[2].coords_l = l;
-                                                    results[2].coords_m = m;
-                                                    results[2].coords_n = n;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    printf("FC 1 : %ld , FC 2 : %ld , FC 3 : %ld\n", results[0].futureCnt, results[1].futureCnt, results[2].futureCnt);
-    if((results[0].futureCnt + results[1].futureCnt + results[2].futureCnt) != 0){
-        SMALLTYPE bestScore = 0;
-        SMALLTYPE index = 0;
-        for(SMALLTYPE i = 0 ; i < 3 ; i++){
-            if(bestScore <= results[i].score){
-                bestScore = results[i].score;
-                index = i;
-            }
-        }
-        printf("BEST INDEX %d : \n", index);
-        result.BestFuture = results[index].BestFuture;
-        result = results[index];
-    }
-    else {
-        printf("CANNOT FIND ANY... Its over...\n");
-        result.futureCnt = 0;
-    }
-    printf("MAX Score : %d / Total Future Count : %ld\n", result.score, results[0].futureCnt + results[1].futureCnt + results[2].futureCnt);
 
-    return result;
+/**
+ * A member function for ThreadHeuristicMethod. This would be used as a single Thread
+ * @param curField the current field to search
+ * @param shapeList the shape list
+ * @param x the first shape to put
+ * @param y the second shape to put
+ * @param z the last shape to put
+ * @param pResult the pointer to get results. Just like old C.
+ */
+void ThreadHeuristicMethod::algorithmThread(Field curField, Shape* shapeList, SMALLTYPE x, SMALLTYPE y, SMALLTYPE z, SMALLTYPE threadNo, bfResult* pResult){
+    pResult->score = 0;
+    pResult->futureCnt = 0;
+    long sameCount = 0;
+    SMALLTYPE curMAX = 0;
+    /**for(SMALLTYPE i = 0 ; i < 9 ; i++){
+        for (SMALLTYPE j = 0 ; j < 9 ; j++){
+            for (SMALLTYPE k = 0 ; k < 9 ; k++){
+                for (SMALLTYPE l = 0 ; l < 9 ; l++){
+                    for(SMALLTYPE m = 0 ; m < 9 ; m++){
+                        for(SMALLTYPE n = 0 ; n < 9 ; n++)
+                            if (shapeList[x].canPutIn(i, j, curField)) {
+                                Field newField0 = shapeList[x].putIn(i, j, curField);
+                                if(shapeList[y].canPutIn(k, l, newField0)) {
+                                    Field newField1 = shapeList[y].putIn(k, l, newField0);
+                                    if (shapeList[z].canPutIn(m, n, newField1)) {
+                                        Field newField2 = shapeList[z].putIn(m, n, newField1);
+
+                                        SMALLTYPE score = newField2.peekScore();
+                                        SMALLTYPE emptyGroups = newField2.getEmptySpaceGroups(); // number of empty groups.
+                                        SMALLTYPE heuristicScore = score + ((81 - emptyGroups) / 10);
+
+                                        pResult->futureCnt++;
+                                        if (curMAX <= heuristicScore) {
+                                            sameCount += curMAX == heuristicScore;
+                                            curMAX = heuristicScore;
+                                            pResult->BestFuture = newField2;
+                                            pResult->Step1 = newField0;
+                                            pResult->Step2 = newField1;
+                                            pResult->score = score;
+                                            pResult->coords_i = i;
+                                            pResult->coords_j = j;
+                                            pResult->coords_k = k;
+                                            pResult->coords_l = l;
+                                            pResult->coords_m = m;
+                                            pResult->coords_n = n;
+                                        }
+                                    }
+                                }
+                            }
+                    }
+                }
+            }
+        }
+    }
+     **/
+    for(SMALLTYPE i = 0 ; i < 9 ; i++){
+        for (SMALLTYPE j = 0 ; j < 9 ; j++){
+            for (SMALLTYPE k = 0 ; k < 9 ; k++){
+                for (SMALLTYPE l = 0 ; l < 9 ; l++){
+                    for(SMALLTYPE m = 0 ; m < 9 ; m++){
+                        for(SMALLTYPE n = 0 ; n < 9 ; n++) {
+                            SMALLTYPE score = 0;
+                            if (shapeList[x].canPutIn(i, j, curField)) {
+                                Field newField0 = shapeList[x].putIn(i, j, curField);
+                                score += newField0.calculateScore();
+                                if (shapeList[y].canPutIn(k, l, newField0)) {
+                                    Field newField1 = shapeList[y].putIn(k, l, newField0);
+                                    score += newField1.calculateScore();
+                                    if (shapeList[z].canPutIn(m, n, newField1)) {
+                                        Field newField2 = shapeList[z].putIn(m, n, newField1);
+                                        score += newField2.peekScore();
+                                        SMALLTYPE emptyGroups = newField2.getEmptySpaceGroups(); // number of empty groups.
+                                        SMALLTYPE heuristicScore = score + ((81 - emptyGroups) / 10);
+
+                                        pResult->futureCnt++;
+                                        if (curMAX <= heuristicScore) {
+                                            sameCount += curMAX == heuristicScore;
+                                            curMAX = heuristicScore;
+                                            pResult->BestFuture = newField2;
+                                            pResult->Step1 = newField0;
+                                            pResult->Step2 = newField1;
+                                            pResult->score = score;
+                                            pResult->coords_i = i;
+                                            pResult->coords_j = j;
+                                            pResult->coords_k = k;
+                                            pResult->coords_l = l;
+                                            pResult->coords_m = m;
+                                            pResult->coords_n = n;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+/**
+ * A method for finding the best future with threads. The old HeuristicsMethod had just one option to find the best
+ * future. The order was fixed to 1->2->3. However, with test results there were some cases that might have survived
+ * and scored more if the order was a bit different. So this new member function searches ways all 6 cases (3!). Since
+ * it will take up to 6 more calculations and times, this will use Threading.
+ * @param curField
+ * @param shapeList
+ * @return
+ */
+bfResult resultList[6]; // generate non local variable. by CSNE
+bfResult ThreadHeuristicMethod::findBestFuture(Field curField, Shape* shapeList){
+    SMALLTYPE heuristicsList[6];
+    SMALLTYPE bestIndex = 0;
+    SMALLTYPE bestHeuristic = 0;
+    long bestFutureCnt = 0;
+    ThreadHeuristicMethod ta;
+    // Generate threads.
+    std::thread t1(&ThreadHeuristicMethod::algorithmThread, ta, curField, shapeList, 0, 1, 2, 1, &(resultList[0]));
+    std::thread t2(&ThreadHeuristicMethod::algorithmThread, ta, curField, shapeList, 0, 2, 1, 2, &(resultList[1]));
+    std::thread t3(&ThreadHeuristicMethod::algorithmThread, ta, curField, shapeList, 1, 0, 2, 3, &(resultList[2]));
+    std::thread t4(&ThreadHeuristicMethod::algorithmThread, ta, curField, shapeList, 1, 2, 0, 4, &(resultList[3]));
+    std::thread t5(&ThreadHeuristicMethod::algorithmThread, ta, curField, shapeList, 2, 0, 1, 5, &(resultList[4]));
+    std::thread t6(&ThreadHeuristicMethod::algorithmThread, ta, curField, shapeList, 2, 1, 0, 6, &(resultList[5]));
+
+    t1.join(); // After they are done, join them
+    t2.join();
+    t3.join();
+    t4.join();
+    t5.join();
+    t6.join();
+
+    for(SMALLTYPE i = 0 ; i < 6 ; i++) {
+        printf("Thread %d : Total Future %ld / MAX Score %d \n", i, resultList[i].futureCnt, ((81 - resultList[bestIndex].BestFuture.getEmptySpaceGroups())) / 10);
+        heuristicsList[i] = resultList[i].score + ((81 - (resultList[i].BestFuture.getEmptySpaceGroups())) / 10);
+        if (bestHeuristic <= heuristicsList[i]) {
+            if(bestFutureCnt <= resultList[i].futureCnt){
+                bestHeuristic = heuristicsList[i];
+                bestFutureCnt = resultList[i].futureCnt;
+                bestIndex = i;
+            }
+        }
+    }
+
+    printf("Best index : %d\n", bestIndex);
+    printf("MAX Score : %d / Group Score : %d\n", resultList[bestIndex].score, ((81 - resultList[bestIndex].BestFuture.getEmptySpaceGroups())) / 10);
+    return resultList[bestIndex];
 }
 
 /**
@@ -379,462 +254,6 @@ bfResult HeuristicsMethod::findBestFuture(Field curField, Shape* shapeList){
                             }
                     }
                 }
-            }
-        }
-    }
-
-    if (result.futureCnt == 0){ // when we cannot find any possible future with 3 pieces all together
-        printf("\x1B[31mNo possible future with all 3 blocks. Now using 2 blocks\n");
-        SMALLTYPE blockScore[3];
-
-        // Try with two blocks combination.
-        bfResult results[3]; // block 0, 1
-        results[0].futureCnt = 0;
-        results[0].score = 0;
-        results[1].futureCnt = 0;
-        results[1].score = 0;
-        results[2].futureCnt = 0;
-        results[2].score = 0;
-
-        for(SMALLTYPE i = 0 ; i < 9 ; i++) {
-            for (SMALLTYPE j = 0; j < 9; j++) {
-                for (SMALLTYPE k = 0; k < 9; k++) {
-                    for (SMALLTYPE l = 0; l < 9; l++) {
-                        if (shapeList[0].canPutIn(i, j, curField)) {
-                            Field newField0 = shapeList[0].putIn(i, j, curField);
-                            if (shapeList[1].canPutIn(k, l, newField0)) {
-                                Field newField1 = shapeList[1].putIn(k, l, newField0);
-                                SMALLTYPE score = newField1.peekScore();
-                                SMALLTYPE emptyGroups = newField1.getEmptySpaceGroups(); // number of empty groups.
-                                SMALLTYPE heuristicScore = score + ((81 - emptyGroups) / 10);
-                                blockScore[0]++;
-                                if (curMAX <= heuristicScore) {
-                                    sameCount += curMAX == heuristicScore;
-                                    curMAX = heuristicScore;
-                                    results[0].BestFuture = newField1;
-                                    results[0].Step1 = newField0;
-                                    results[0].Step2 = newField1;
-                                    results[0].score = score;
-                                    results[0].coords_i = i;
-                                    results[0].coords_j = j;
-                                    results[0].coords_k = k;
-                                    results[0].coords_l = l;
-                                    results[0].coords_m = 0;
-                                    results[0].coords_n = 0;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        for(SMALLTYPE i = 0 ; i < 9 ; i++) { // block 0, 2
-            for (SMALLTYPE j = 0; j < 9; j++) {
-                for (SMALLTYPE k = 0; k < 9; k++) {
-                    for (SMALLTYPE l = 0; l < 9; l++) {
-                        if (shapeList[0].canPutIn(i, j, curField)) {
-                            Field newField0 = shapeList[0].putIn(i, j, curField);
-                            if (shapeList[2].canPutIn(k, l, newField0)) {
-                                Field newField1 = shapeList[2].putIn(k, l, newField0);
-                                SMALLTYPE score = newField1.peekScore();
-                                SMALLTYPE emptyGroups = newField1.getEmptySpaceGroups(); // number of empty groups.
-                                SMALLTYPE heuristicScore = score + ((81 - emptyGroups) / 10);
-                                blockScore[1]++;
-                                if (curMAX <= heuristicScore) {
-                                    sameCount += curMAX == heuristicScore;
-                                    curMAX = heuristicScore;
-                                    results[1].BestFuture = newField1;
-                                    results[1].Step1 = newField0;
-                                    results[1].Step2 = newField1;
-                                    results[1].score = score;
-                                    results[1].coords_i = i;
-                                    results[1].coords_j = j;
-                                    results[1].coords_k = k;
-                                    results[1].coords_l = l;
-                                    results[1].coords_m = 0;
-                                    results[1].coords_n = 0;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        for(SMALLTYPE i = 0 ; i < 9 ; i++) { // block 1, 2
-            for (SMALLTYPE j = 0; j < 9; j++) {
-                for (SMALLTYPE k = 0; k < 9; k++) {
-                    for (SMALLTYPE l = 0; l < 9; l++) {
-                        if (shapeList[1].canPutIn(i, j, curField)) {
-                            Field newField0 = shapeList[1].putIn(i, j, curField);
-                            if (shapeList[2].canPutIn(k, l, newField0)) {
-                                Field newField1 = shapeList[2].putIn(k, l, newField0);
-                                SMALLTYPE score = newField1.peekScore();
-                                SMALLTYPE emptyGroups = newField1.getEmptySpaceGroups(); // number of empty groups.
-                                SMALLTYPE heuristicScore = score + ((81 - emptyGroups) / 10);
-                                blockScore[2]++;
-                                if (curMAX <= heuristicScore) {
-                                    sameCount += curMAX == heuristicScore;
-                                    curMAX = heuristicScore;
-                                    results[2].BestFuture = newField1;
-                                    results[2].Step1 = newField0;
-                                    results[2].Step2 = newField1;
-                                    results[2].score = score;
-                                    results[2].coords_i = i;
-                                    results[2].coords_j = j;
-                                    results[2].coords_k = k;
-                                    results[2].coords_l = l;
-                                    results[2].coords_m = 0;
-                                    results[2].coords_n = 0;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if (result.futureCnt != 0){
-            SMALLTYPE futureScore[3];
-            SMALLTYPE maxIndex = 0;
-            Field possibleField;
-
-            for(SMALLTYPE i = 0 ; i < 3 ; i++){
-                futureScore[i] = results[i].score + blockScore[i];
-                maxIndex = i;
-                possibleField = results[i].BestFuture;
-            }
-            possibleField.calculateScore(); // clear out possible field for 3rd piece input.
-
-            if(maxIndex == 0){
-                SMALLTYPE possibleMAX = 0;
-                for(SMALLTYPE i = 0 ; i < 9 ; i++){
-                    for(SMALLTYPE j = 0 ; j < 9 ; j++){
-                        if(shapeList[2].canPutIn(j, i, possibleField)){
-                            result.futureCnt++;
-                            Field newField1 = shapeList[2].putIn(j, i, possibleField);
-                            SMALLTYPE score = newField1.peekScore();
-                            SMALLTYPE emptyGroups = newField1.getEmptySpaceGroups(); // number of empty groups.
-                            SMALLTYPE heuristicScore = score + ((81 - emptyGroups) / 10);
-                            if (possibleMAX <= heuristicScore) {
-                                sameCount += possibleMAX == heuristicScore;
-                                possibleMAX = heuristicScore;
-                                results[2].BestFuture = newField1;
-                                results[2].score = score;
-                                results[2].coords_m = i;
-                                results[2].coords_n = j;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if(maxIndex == 1){
-                SMALLTYPE possibleMAX = 0;
-                for(SMALLTYPE i = 0 ; i < 9 ; i++){
-                    for(SMALLTYPE j = 0 ; j < 9 ; j++){
-                        if(shapeList[1].canPutIn(j, i, possibleField)){
-                            result.futureCnt++;
-                            Field newField1 = shapeList[1].putIn(j, i, possibleField);
-                            SMALLTYPE score = newField1.peekScore();
-                            SMALLTYPE emptyGroups = newField1.getEmptySpaceGroups(); // number of empty groups.
-                            SMALLTYPE heuristicScore = score + ((81 - emptyGroups) / 10);
-                            if (possibleMAX <= heuristicScore) {
-                                sameCount += possibleMAX == heuristicScore;
-                                possibleMAX = heuristicScore;
-                                results[2].BestFuture = newField1;
-                                results[2].score = score;
-                                results[2].coords_m = i;
-                                results[2].coords_n = j;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if(maxIndex == 2){
-                SMALLTYPE possibleMAX = 0;
-                for(SMALLTYPE i = 0 ; i < 9 ; i++){
-                    for(SMALLTYPE j = 0 ; j < 9 ; j++){
-                        if(shapeList[0].canPutIn(j, i, possibleField)){
-                            result.futureCnt++;
-                            Field newField1 = shapeList[0].putIn(j, i, possibleField);
-                            SMALLTYPE score = newField1.peekScore();
-                            SMALLTYPE emptyGroups = newField1.getEmptySpaceGroups(); // number of empty groups.
-                            SMALLTYPE heuristicScore = score + ((81 - emptyGroups) / 10);
-                            if (possibleMAX <= heuristicScore) {
-                                sameCount += possibleMAX == heuristicScore;
-                                possibleMAX = heuristicScore;
-                                results[2].BestFuture = newField1;
-                                results[2].score = score;
-                                results[2].coords_m = i;
-                                results[2].coords_n = j;
-                            }
-                        }
-                    }
-                }
-            }
-            if (result.futureCnt == 1)
-                printf("\x1B[32mThat was close. Phew...\n");
-
-        }else {
-            // Try with two blocks combination.
-            printf("\x1B[31mNo possible future with all 2 blocks. Now using 1 block\n");
-            SMALLTYPE curBest0 = 0;
-
-           for (SMALLTYPE i = 0 ; i < 9 ; i++){
-                for (SMALLTYPE j = 0 ; j < 9 ; j++){
-                    if(shapeList[0].canPutIn(j, i, curField)){ // try 0, 1, 2 and 0, 2, 1
-                        Field newField0 = shapeList[0].putIn(j, i, curField);
-                        SMALLTYPE score0 = newField0.peekScore();
-                        if(curBest0 <= score0){ // try 1 -> 2 order.
-                            curBest0 = score0;
-                            SMALLTYPE curBest1 = 0;
-                            for(SMALLTYPE k = 0 ; k < 9 ; k++) {
-                                for (SMALLTYPE l = 0; l < 9; l++) {
-                                    if (shapeList[1].canPutIn(l, k, newField0)) { // try 2.
-                                        Field newField1 = shapeList[1].putIn(l, k, newField0);
-                                        SMALLTYPE score1 = newField1.peekScore();
-                                        if (curBest1 <= score1) { // if we can put second piece, try last one.
-                                            curBest1 = score1;
-                                            SMALLTYPE curBest2 = 0;
-                                            for (SMALLTYPE m = 0; m < 9; m++) {
-                                                for (SMALLTYPE n = 0; n < 9; n++) {
-                                                    if (shapeList[2].canPutIn(n, m, newField1)) {
-                                                        Field newField2 = shapeList[2].putIn(l, k, newField1);
-                                                        printf("Found at least one possible case : 0 -> 1 -> 2\n");
-                                                        SMALLTYPE score2 = newField2.peekScore();
-                                                        newField2.calculateScore();
-                                                        if (curBest2 <= score2) {
-                                                            curBest2 = score2;
-                                                            results[0].futureCnt++; // we at least have one survival case.
-                                                            results[0].score = score0 + score1 + score2;
-                                                            results[0].Step1 = newField0;
-                                                            results[0].Step2 = newField1;
-                                                            results[0].BestFuture = newField2;
-                                                            results[0].coords_i = i;
-                                                            results[0].coords_j = j;
-                                                            results[0].coords_k = k;
-                                                            results[0].coords_l = l;
-                                                            results[0].coords_m = m;
-                                                            results[0].coords_n = n;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            for(SMALLTYPE k = 0 ; k < 9 ; k++){
-                                for(SMALLTYPE l = 0 ; l < 9 ; l++){
-                                    if (shapeList[2].canPutIn(l, k, newField0)){ // t.
-                                        Field newField1 = shapeList[2].putIn(l, k, newField0);
-                                        SMALLTYPE score1 = newField1.peekScore();
-                                        if(curBest1 <= score1){ // if we can put second piece, try last one.
-                                            curBest1 = score1;
-                                            for (SMALLTYPE m = 0 ; m < 9 ; m++){
-                                                for (SMALLTYPE n = 0 ; n < 9 ; n++){
-                                                    if(shapeList[1].canPutIn(n, m , newField1)){
-                                                        Field newField2 = shapeList[1].putIn(l, k, newField1);
-                                                        printf("Found at least one possible case : 0 -> 2 -> 1\n");
-                                                        SMALLTYPE score2 = newField2.peekScore();
-                                                        newField2.calculateScore();
-                                                        if ((score0 + score1 + score2) >= results[0].score){
-                                                            results[0].futureCnt++;
-                                                            results[0].score = score0 + score1 + score2; // update one more
-                                                            results[0].Step1 = newField0;
-                                                            results[0].Step2 = newField1;
-                                                            results[0].BestFuture = newField2;
-                                                            results[0].coords_i = i;
-                                                            results[0].coords_j = j;
-                                                            results[0].coords_k = k;
-                                                            results[0].coords_l = l;
-                                                            results[0].coords_m = m;
-                                                            results[0].coords_n = n;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if(shapeList[1].canPutIn(j, i, curField)){ // try 1, 0, 2 and 1, 2, 0
-                        Field newField0 = shapeList[0].putIn(j, i, curField);
-                        SMALLTYPE score0 = newField0.peekScore();
-                        if(curBest0 <= score0){ //
-                            curBest0 = score0;
-                            SMALLTYPE curBest1 = 0;
-                            for(SMALLTYPE k = 0 ; k < 9 ; k++) {
-                                for (SMALLTYPE l = 0; l < 9; l++) {
-                                    if (shapeList[0].canPutIn(l, k, newField0)) { // try 2.
-                                        Field newField1 = shapeList[0].putIn(l, k, newField0);
-                                        SMALLTYPE score1 = newField1.peekScore();
-                                        if (curBest1 <= score1) { // if we can put second piece, try last one.
-                                            curBest1 = score1;
-                                            SMALLTYPE curBest2 = 0;
-                                            for (SMALLTYPE m = 0; m < 9; m++) {
-                                                for (SMALLTYPE n = 0; n < 9; n++) {
-                                                    if (shapeList[2].canPutIn(n, m, newField1)) {
-                                                        Field newField2 = shapeList[2].putIn(l, k, newField1);
-                                                        printf("Found at least one possible case : 1 -> 0 -> 2\n");
-                                                        SMALLTYPE score2 = newField2.peekScore();
-                                                        newField2.calculateScore();
-                                                        if (curBest2 <= score2) {
-                                                            curBest2 = score2;
-                                                            results[1].futureCnt++; // we at least have one survival case.
-                                                            results[1].score = score0 + score1 + score2;
-                                                            results[1].Step1 = newField0;
-                                                            results[1].Step2 = newField1;
-                                                            results[1].BestFuture = newField2;
-                                                            results[1].coords_i = i;
-                                                            results[1].coords_j = j;
-                                                            results[1].coords_k = k;
-                                                            results[1].coords_l = l;
-                                                            results[1].coords_m = m;
-                                                            results[1].coords_n = n;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            for(SMALLTYPE k = 0 ; k < 9 ; k++){
-                                for(SMALLTYPE l = 0 ; l < 9 ; l++){
-                                    if (shapeList[2].canPutIn(l, k, newField0)){ // try 2.
-                                        Field newField1 = shapeList[2].putIn(l, k, newField0);
-                                        SMALLTYPE score1 = newField1.peekScore();
-                                        if(curBest1 <= score1){ // if we can put second piece, try last one.
-                                            curBest1 = score1;
-                                            for (SMALLTYPE m = 0 ; m < 9 ; m++){
-                                                for (SMALLTYPE n = 0 ; n < 9 ; n++){
-                                                    if(shapeList[0].canPutIn(n, m , newField1)){
-                                                        Field newField2 = shapeList[0].putIn(l, k, newField1);
-                                                        printf("Found at least one possible case : 1 -> 2 -> 0\n");
-                                                        SMALLTYPE score2 = newField2.peekScore();
-                                                        newField2.calculateScore();
-                                                        if ((score0 + score1 + score2) >= results[0].score){
-                                                            results[1].futureCnt++;
-                                                            results[1].score = score0 + score1 + score2; // update one more
-                                                            results[1].Step1 = newField0;
-                                                            results[1].Step2 = newField1;
-                                                            results[1].BestFuture = newField2;
-                                                            results[1].coords_i = i;
-                                                            results[1].coords_j = j;
-                                                            results[1].coords_k = k;
-                                                            results[1].coords_l = l;
-                                                            results[1].coords_m = m;
-                                                            results[1].coords_n = n;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if(shapeList[2].canPutIn(j, i, curField)){ // try 2, 0, 1 and 2, 1, 0
-                        Field newField0 = shapeList[2].putIn(j, i, curField);
-                        SMALLTYPE score0 = newField0.peekScore();
-                        if(curBest0 <= score0){ // try 1 -> 2 order.
-                            curBest0 = score0;
-                            SMALLTYPE curBest1 = 0;
-                            for(SMALLTYPE k = 0 ; k < 9 ; k++) {
-                                for (SMALLTYPE l = 0; l < 9; l++) {
-                                    if (shapeList[0].canPutIn(l, k, newField0)) { // try 2.
-                                        Field newField1 = shapeList[0].putIn(l, k, newField0);
-                                        SMALLTYPE score1 = newField1.peekScore();
-                                        if (curBest1 <= score1) { // if we can put second piece, try last one.
-                                            curBest1 = score1;
-                                            SMALLTYPE curBest2 = 0;
-                                            for (SMALLTYPE m = 0; m < 9; m++) {
-                                                for (SMALLTYPE n = 0; n < 9; n++) {
-                                                    if (shapeList[1].canPutIn(n, m, newField1)) {
-                                                        Field newField2 = shapeList[1].putIn(l, k, newField1);
-                                                        printf("Found at least one possible case : 2 -> 0 -> 1\n");
-                                                        SMALLTYPE score2 = newField2.peekScore();
-                                                        newField2.calculateScore();
-                                                        if (curBest2 <= score2) {
-                                                            curBest2 = score2;
-                                                            results[2].futureCnt++; // we at least have one survival case.
-                                                            results[2].score = score0 + score1 + score2;
-                                                            results[2].Step1 = newField0;
-                                                            results[2].Step2 = newField1;
-                                                            results[2].BestFuture = newField2;
-                                                            results[2].coords_i = i;
-                                                            results[2].coords_j = j;
-                                                            results[2].coords_k = k;
-                                                            results[2].coords_l = l;
-                                                            results[2].coords_m = m;
-                                                            results[2].coords_n = n;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            for(SMALLTYPE k = 0 ; k < 9 ; k++){
-                                for(SMALLTYPE l = 0 ; l < 9 ; l++){
-                                    if (shapeList[1].canPutIn(l, k, newField0)){ // try 2.
-                                        Field newField1 = shapeList[1].putIn(l, k, newField0);
-                                        SMALLTYPE score1 = newField1.peekScore();
-                                        if(curBest1 <= score1){ // if we can put second piece, try last one.
-                                            curBest1 = score1;
-                                            for (SMALLTYPE m = 0 ; m < 9 ; m++){
-                                                for (SMALLTYPE n = 0 ; n < 9 ; n++){
-                                                    if(shapeList[0].canPutIn(n, m , newField1)){
-                                                        Field newField2 = shapeList[0].putIn(l, k, newField1);
-                                                        printf("Found at least one possible case : 2 -> 1 -> 0\n");
-                                                        SMALLTYPE score2 = newField2.peekScore();
-                                                        newField2.calculateScore();
-                                                        if ((score0 + score1 + score2) >= results[0].score){
-                                                            results[2].futureCnt++;
-                                                            results[2].score = score0 + score1 + score2; // update one more
-                                                            results[2].Step1 = newField0;
-                                                            results[2].Step2 = newField1;
-                                                            results[2].BestFuture = newField2;
-                                                            results[2].coords_i = i;
-                                                            results[2].coords_j = j;
-                                                            results[2].coords_k = k;
-                                                            results[2].coords_l = l;
-                                                            results[2].coords_m = m;
-                                                            results[2].coords_n = n;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            printf("FC 1 : %ld , FC 2 : %ld , FC 3 : %ld\n", results[0].futureCnt, results[1].futureCnt, results[2].futureCnt);
-            if((results[0].futureCnt + results[1].futureCnt + results[2].futureCnt) != 0){
-                SMALLTYPE bestScore = 0;
-                SMALLTYPE index = 0;
-                for(SMALLTYPE i = 0 ; i < 3 ; i++){
-                    if(bestScore <= results[i].score){
-                        bestScore = results[i].score;
-                        index = i;
-                    }
-                }
-                printf("BEST INDEX %d : \n", index);
-                result.BestFuture = results[index].BestFuture;
-            }
-            else {
-                printf("CANNOT FIND ANY... Its over...\n");
-                result.futureCnt = 0;
             }
         }
     }
@@ -897,7 +316,8 @@ bfResult ScoringMethod::findBestFuture(Field curField, Shape* shapeList) {
 }
 
 /**
- * A class that runs algorithm and the game. Using polymorphism, just throw algorithm class in it and it will
+ * A class that runs algorithm
+ * and the game. Using polymorphism, just throw algorithm class in it and it will
  * run the game and all those systems.
  * @param a the algorithm object
  * @param curField : starting field . Shall be empty and clean
